@@ -12,3 +12,15 @@ With the above link, you will be able to see the Home page.
 To gain access, you must ask one of the Admins for access.
 
 Please contact [Andy Chow](mailto:achow@conestogac.on.ca) or [Priya Manimaran](mailto:pmanimaran@conestogac.on.ca)
+
+### Objective, Key Results (OKR)
+
+This is worth a mention as it is one of the main ways that we will be tracking outcomes and evaluation.
+The OKRs are located in Microsoft Loop as well.
+As soon as you gain access to the Documentation, you will be able to see this under the subpage called OKR.
+
+### Product Roadmap
+
+This is worth a mention as it is one of the main ways that we will be tracking outcomes and evaluation.
+The Product Roadmap is located in Microsoft Loop as well.
+As soon as you gain access to the Documentation, you will be able to see this under the subpage called Product Roadmap.
