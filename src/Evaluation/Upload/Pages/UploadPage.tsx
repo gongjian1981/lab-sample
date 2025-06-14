@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CsvUploadButton } from '../../../CsvHandler/CsvUploadButton';
-import type { EvaluationRow } from '../Types/EvaluationTypes';
+import { saveUploadedEvaluationData } from '../Services/uploadCsv';
+import type { EvaluationRow } from '../../Heatmap/Services/evaluation';
 
 const UploadPage = () => {
   const [fileName, setFileName] = useState('');
@@ -9,8 +10,7 @@ const UploadPage = () => {
 
   // Called after successful CSV upload
   const handleUpload = (data: EvaluationRow[], fileName: string) => {
-    localStorage.setItem('uploaded-eval-data', JSON.stringify(data)); // Save parsed data
-    localStorage.setItem('uploaded-eval-file', fileName);              // Save filename
+    saveUploadedEvaluationData(data, fileName); // Save data to local storage
     setFileName(fileName);
     navigate('/heatmap'); // Navigate to heatmap page
   };

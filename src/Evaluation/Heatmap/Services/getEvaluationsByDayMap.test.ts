@@ -1,23 +1,23 @@
-import { getEvaluationsByDayMap } from './get-evaluations-by-day-map';
-import type { EvaluationItem } from '../Types/evaluation';
+import { getEvaluationsByDayMap } from './getEvaluationsByDayMap';
+import type { EvaluationItem } from './evaluation';
 
 const mockData: EvaluationItem[] = [
   {
-    evaluation_id: '1',
-    course_code: 'INFO8171-25S-S2',
-    evaluation_type: 'Assignment',
+    evaluationId: '1',
+    courseCode: 'INFO8171-25S-S2',
+    evaluationType: 'Assignment',
     dueDay: '2025-06-10'
   },
   {
-    evaluation_id: '2',
-    course_code: 'INFO8171-25S-S2',
-    evaluation_type: 'Quiz',
+    evaluationId: '2',
+    courseCode: 'INFO8171-25S-S2',
+    evaluationType: 'Quiz',
     dueDay: '2025-06-10'
   },
   {
-    evaluation_id: '3',
-    course_code: 'MATH1010-25S-S1',
-    evaluation_type: 'Exam',
+    evaluationId: '3',
+    courseCode: 'MATH1010-25S-S1',
+    evaluationType: 'Exam',
     dueDay: '2025-06-15'
   }
 ];

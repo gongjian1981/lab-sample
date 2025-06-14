@@ -1,12 +1,12 @@
-import { countEvaluationsInWeek } from './count-evaluations-in-week';
-import type { EvaluationItem } from '../Types/evaluation';
+import { countEvaluationsInWeek } from './countEvaluationsInWeek';
+import type { EvaluationItem } from './evaluation';
 
 describe('countEvaluationsInWeek', () => {
   const mockData: EvaluationItem[] = [
-    { evaluation_id: '1', course_code: 'C1', evaluation_type: 'Assignment', dueDay: '2025-06-10' },
-    { evaluation_id: '2', course_code: 'C1', evaluation_type: 'Quiz',       dueDay: '2025-06-12' },
-    { evaluation_id: '3', course_code: 'C2', evaluation_type: 'Assignment', dueDay: '2025-06-18' },
-    { evaluation_id: '4', course_code: 'C2', evaluation_type: 'Quiz',       dueDay: 'invalid-date' },
+    { evaluationId: '1', courseCode: 'C1', evaluationType: 'Assignment', dueDay: '2025-06-10' },
+    { evaluationId: '2', courseCode: 'C1', evaluationType: 'Quiz',       dueDay: '2025-06-12' },
+    { evaluationId: '3', courseCode: 'C2', evaluationType: 'Assignment', dueDay: '2025-06-18' },
+    { evaluationId: '4', courseCode: 'C2', evaluationType: 'Quiz',       dueDay: 'invalid-date' },
   ];
 
   const week: Date[] = [

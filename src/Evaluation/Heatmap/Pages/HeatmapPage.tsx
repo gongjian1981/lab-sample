@@ -1,29 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { EvaluationItem } from '../Types/evaluation';
-import { getEvaluationsByDayMap } from '../Services/get-evaluations-by-day-map';
-import { getCalendarRange, formatDateToYYYYMMDD, formatDayLabel} from '../Services/calendar-tool';
-import { loadEvaluationsFromStorage } from '../Services/evaluation-storage';
-import { isCurrentMonth, shouldHighlightWeek } from '../Services/evaluation-layout';
+import type { EvaluationRow } from '../Services/evaluation';
+import { getEvaluationsByDayMap } from '../Services/getEvaluationsByDayMap';
+import { getCalendarRange, formatDateToYYYYMMDD, formatDayLabel} from '../Services/calendarTool';
+import { loadEvaluations } from '../Services/loadEvaluations';
+import { isCurrentMonth, shouldHighlightWeek } from '../Services/evaluationLayout';
 
 
 const HeatmapPage: React.FC = () => {
   const navigate = useNavigate();
   const now = new Date();
 
-  const [localData, setLocalData] = useState<EvaluationItem[]>([]);
+  const [localData, setLocalData] = useState<EvaluationRow[]>([]);
   const [selectedYear, setSelectedYear] = useState(now.getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(now.getMonth() + 1);
   const [selectedCourse, setSelectedCourse] = useState('');
 
   useEffect(() => {
-    const cached = loadEvaluationsFromStorage();
+    const cached = loadEvaluations();
     setLocalData(cached);
   }, []);
-
-  const courses = Array.from(new Set(localData.map(d => d.course_code)));
+  const courses = Array.from(new Set(localData.map(d => d.courseCode)));
   const filteredData = selectedCourse
-    ? localData.filter(item => item.course_code === selectedCourse)
+    ? localData.filter(item => item.courseCode === selectedCourse)
     : localData;
   const dateRange = getCalendarRange(selectedYear, selectedMonth);
   const startDate = dateRange[0];
@@ -122,7 +121,7 @@ const HeatmapPage: React.FC = () => {
                   >
                     <div className="font-bold">{formatDayLabel(date, selectedMonth)}</div>
                     {dayEvals.map((item, idx) => (
-                      <div key={idx}>{`${item.course_code} - ${item.evaluation_type}`}</div>
+                      <div key={idx}>{`${item.courseCode} - ${item.evaluationType}`}</div>
                     ))}
                   </td>
                 );

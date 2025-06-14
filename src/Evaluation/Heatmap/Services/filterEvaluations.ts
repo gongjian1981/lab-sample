@@ -1,4 +1,4 @@
-import type { EvaluationItem } from '../Types/evaluation';
+import type { EvaluationRow } from './evaluation';
 
 /**
  * Filters evaluation items by year and month.
@@ -8,10 +8,10 @@ import type { EvaluationItem } from '../Types/evaluation';
  * @returns A filtered array of evaluation items.
  */
 export function filterEvaluationsByMonth(
-  data: EvaluationItem[],
+  data: EvaluationRow[],
   year: number,
   month: number
-): EvaluationItem[] {
+): EvaluationRow[] {
   return data.filter((item) => {
     const date = new Date(item.dueDay.trim());
     return (

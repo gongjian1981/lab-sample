@@ -1,4 +1,4 @@
-import type { EvaluationItem } from '../Types/evaluation';
+import type { EvaluationRow } from './evaluation';
 
 /**
  * Counts how many evaluations fall within the given week.
@@ -7,7 +7,7 @@ import type { EvaluationItem } from '../Types/evaluation';
  * @returns The number of evaluations due on any day in that week.
  */
 export function countEvaluationsInWeek(
-  data: EvaluationItem[],
+  data: EvaluationRow[],
   weekDays: Date[]
 ): number {
   return data.filter((item) => {

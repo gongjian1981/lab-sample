@@ -1,4 +1,4 @@
-import { CsvHandler } from './csv-handler';
+import { CsvHandler } from './csvHandler';
 
 interface TestRow {
   name: string;
@@ -19,7 +19,7 @@ describe('CsvHandler', () => {
       { name: 'Bob', score: '85' },
     ];
 
-    CsvHandler.save<TestRow>('mock/path.csv', testData);
+    CsvHandler.saveDataToFile<TestRow>('mock/path.csv', testData);
 
     expect(window.electronAPI.saveToCsvFile).toHaveBeenCalledWith(
       'mock/path.csv',

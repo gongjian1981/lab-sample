@@ -1,15 +1,13 @@
-import type { EvaluationItem } from '../Types/evaluation';
-import { getEvaluationsByDay } from './get-evaluations-by-day';
+import type { EvaluationRow } from './evaluation';
 
 export function getEvaluationsByDayMap(
-  data: EvaluationItem[],
+  data: EvaluationRow[],
   startDate: Date,
   endDate: Date
-): Record<string, EvaluationItem[]> {
-  const result: Record<string, EvaluationItem[]> = {};
-
+): Record<string, EvaluationRow[]> {
+  const result: Record<string, EvaluationRow[]> = {};
   for (const row of data) {
-    const rowDate = new Date(row.due_day);
+    const rowDate = new Date(row.dueDay);
     if (rowDate >= startDate && rowDate <= endDate) {
       const key = rowDate.toISOString().split('T')[0]; // 'YYYY-MM-DD'
       if (!result[key]) {

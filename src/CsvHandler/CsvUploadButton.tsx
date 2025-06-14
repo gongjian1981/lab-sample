@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { CsvHandler } from './csv-handler';
+import { CsvHandler } from './csvHandler';
 
 interface CsvUploadButtonProps<T> {
   onUpload: (data: T[], fileName: string) => void;
@@ -21,7 +21,7 @@ export function CsvUploadButton<T>({
     if (!file) return;
 
     // Parse CSV content and call the callback
-    const data = await CsvHandler.parseFromFile<T>(file);
+    const data = await CsvHandler.getDataFromFile<T>(file);
     onUpload(data, file.name);
 
     // Reset input to allow re-uploading the same file

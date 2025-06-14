@@ -1,4 +1,4 @@
-import type { EvaluationItem } from '../Types/evaluation';
+import type { EvaluationRow } from './evaluation';
 
 /**
  * Returns all evaluations due on the specified day.
@@ -7,16 +7,13 @@ import type { EvaluationItem } from '../Types/evaluation';
  * @returns Matching evaluation items.
  */
 export function getEvaluationsByDay(
-  data: EvaluationItem[],
+  data: EvaluationRow[],
   dateStr: string
-): EvaluationItem[] {
-  console.log('[getEvaluationsByDay] Filter dateStr:', dateStr);
+): EvaluationRow[] {
 
   return data.filter((item) => {
-    const due = item.due_day?.trim?.().slice(0, 10);
+    const due = item.dueDay?.trim?.().slice(0, 10);
     const match = due === dateStr;
-
-    console.log(`[Compare] dueDay: ${due}, match: ${match}`);
 
     return match;
   });

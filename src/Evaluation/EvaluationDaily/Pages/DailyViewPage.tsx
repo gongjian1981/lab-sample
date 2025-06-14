@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import type { EvaluationRow } from '../Types/EvaluationTypes';
-import { getEvaluationsForDate } from '../Services/filter-by-date';
-import { deleteEvaluation } from '../Services/delete-evaluation';
-import { saveOrUpdateEvaluation } from '../Services/save-or-update-evaluation';
-import { loadEvaluationsFromStorage } from '../Services/evaluation-storage';
+import type { EvaluationRow } from '../../Heatmap/Services/evaluation';
+import { getEvaluationsForDate } from '../Services/filterByDate';
+import { deleteEvaluation } from '../Services/deleteEvaluation';
+import { saveOrUpdateEvaluation } from '../Services/saveOrUpdateEvaluation';
+import { loadEvaluations } from '../Services/loadEvaluations';
 
 interface DailyViewProps {
   date: string;
@@ -11,52 +11,51 @@ interface DailyViewProps {
 }
 
 export const COURSE_OPTIONS = ['INFO8171 - 2', 'SENG8051 - 2', 'SENG8061 - 2', 'SENG8071 - 2', 'SENG8130 - 2'];
-export const EVALUATION_TYPE_OPTIONS = ['Assignment', 'Quiz', 'Midterm', 'Final'];
+export const evaluationType_OPTIONS = ['Assignment', 'Quiz', 'Midterm', 'Final'];
 
 const DailyViewPage: React.FC<DailyViewProps> = ({
   date,
   onBack,
 }) => {
   const filePath = null; // Replace with actual file path if needed
-  const [data, setData] = useState<EvaluationRow[]>(loadEvaluationsFromStorage() || []);
+  const [data, setData] = useState<EvaluationRow[]>(loadEvaluations() || []);
   const [form, setForm] = useState<Partial<EvaluationRow>>({
-    evaluation_id: '',
-    course_code: '',
-    evaluation_type: '',
-    due_day: ''
+    evaluationId: '',
+    courseCode: '',
+    evaluationType: '',
+    dueDay: ''
   });
 
   const evaluationsForDate = getEvaluationsForDate(data, date);
 
-  const handleDelete = (evaluation_id: string) => {
+  const handleDelete = (evaluationId: string) => {
     if (!window.confirm('Are you sure you want to delete this evaluation?')) return;
-    const updated = deleteEvaluation(data, evaluation_id, filePath);
+    const updated = deleteEvaluation(data, evaluationId, filePath);
     setData(updated);
   };
 
-  const handleEdit = (evaluation_id: string) => {
-    const ev = evaluationsForDate.find(e => e.evaluation_id === evaluation_id);
+  const handleEdit = (evaluationId: string) => {
+    const ev = evaluationsForDate.find(e => e.evaluationId === evaluationId);
     if (!ev) {
-      console.error('Evaluation not found for ID:', evaluation_id);
+      console.error('Evaluation not found for ID:', evaluationId);
       return;
     }
     setForm(ev);
   };
 
   const handleSave = () => {
-    if (!form.course_code || !form.evaluation_type ) {
+    if (!form.courseCode || !form.evaluationType ) {
       alert('Course and Type are required');
       return;
     }
-    const confirmText = form.evaluation_id
+    const confirmText = form.evaluationId
       ? 'Are you sure you want to update this evaluation?'
       : 'Are you sure you want to add this new evaluation?';
 
     if (!window.confirm(confirmText)) return;
-
     const updated = saveOrUpdateEvaluation(data, form, date, filePath);
     setData(updated);
-    setForm({ evaluation_id: '', course_code: '', evaluation_type: '', due_day: '' });
+    setForm({ evaluationId: '', courseCode: '', evaluationType: '', dueDay: '' });
   };
 
   return (
@@ -74,13 +73,13 @@ const DailyViewPage: React.FC<DailyViewProps> = ({
         <tbody>
           {evaluationsForDate.map((ev, idx) => (
             <tr key={idx} className="text-center">
-              <td className="border p-2">{ev.course_code}</td>
-              <td className="border p-2">{ev.evaluation_type}</td>
+              <td className="border p-2">{ev.courseCode}</td>
+              <td className="border p-2">{ev.evaluationType}</td>
               <td className="border p-2 space-x-2">
-                <button onClick={() => handleEdit(ev.evaluation_id)} className="text-blue-600">
+                <button onClick={() => handleEdit(ev.evaluationId)} className="text-blue-600">
                   Edit
                 </button>
-                <button onClick={() => handleDelete(ev.evaluation_id)} className="text-red-600">
+                <button onClick={() => handleDelete(ev.evaluationId)} className="text-red-600">
                   Delete
                 </button>
               </td>
@@ -91,14 +90,14 @@ const DailyViewPage: React.FC<DailyViewProps> = ({
 
       <div className="border p-4 rounded bg-gray-50 space-y-2">
         <h3 className="font-semibold">
-          {form.evaluation_id ? 'Edit Evaluation' : 'Add New Evaluation'}
+          {form.evaluationId ? 'Edit Evaluation' : 'Add New Evaluation'}
         </h3>
 
         <div className="flex flex-col sm:flex-row gap-2">
           <select
             className="border p-1 flex-1"
-            value={form.course_code || ''}
-            onChange={(e) => setForm({ ...form, course_code: e.target.value })}
+            value={form.courseCode || ''}
+            onChange={(e) => setForm({ ...form, courseCode: e.target.value })}
           >
             <option value="">Select Course</option>
             {COURSE_OPTIONS.map((c) => (
@@ -108,11 +107,11 @@ const DailyViewPage: React.FC<DailyViewProps> = ({
 
           <select
             className="border p-1 flex-1"
-            value={form.evaluation_type || ''}
-            onChange={(e) => setForm({ ...form, evaluation_type: e.target.value })}
+            value={form.evaluationType || ''}
+            onChange={(e) => setForm({ ...form, evaluationType: e.target.value })}
           >
             <option value="">Select Type</option>
-            {EVALUATION_TYPE_OPTIONS.map((t) => (
+            {evaluationType_OPTIONS.map((t) => (
               <option key={t} value={t}>{t}</option>
             ))}
           </select>
@@ -123,7 +122,7 @@ const DailyViewPage: React.FC<DailyViewProps> = ({
             className="bg-blue-600 text-white px-4 py-1 rounded"
             onClick={handleSave}
           >
-            {form.evaluation_id ? 'Update' : 'Add'}
+            {form.evaluationId ? 'Update' : 'Add'}
           </button>
         </div>
       </div>
