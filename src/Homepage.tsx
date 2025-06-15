@@ -19,7 +19,7 @@ function Homepage() {
       </p>
       <div className="flex gap-4 my-[100px]">
         <button
-          onClick={() => navigate('/enrollment')}
+          onClick={() => navigate('/dashboard')}
           className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md shadow"
         >
           Go to Enrollment
