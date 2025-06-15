@@ -2,7 +2,7 @@ import React from 'react';
 import type { RouteObject } from 'react-router-dom';
 import type { EvaluationRow } from '../Evaluation/Heatmap/Services/evaluation';
 import { EVALUATION_DATA_STORAGE_KEY } from '../constants';
-import { localStorageService } from '../localStroageService';
+import { localStorageService } from '../localStroageService/localStroageService';
 
 const HeatmapPage = React.lazy(() =>
   import('../Evaluation/Heatmap/Pages/HeatmapPage')

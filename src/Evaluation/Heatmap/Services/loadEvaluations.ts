@@ -1,6 +1,6 @@
 import { EVALUATION_DATA_STORAGE_KEY } from '../../../constants';
 import type { EvaluationRow } from './evaluation';
-import { localStorageService } from '../../../localStroageService';
+import { loadFromStorage } from '../../../localStroageService/localStroageService';
 
 /**
  * Loads evaluation data from localStorage.
@@ -9,7 +9,7 @@ import { localStorageService } from '../../../localStroageService';
  */
 export function loadEvaluations(): EvaluationRow[] {
   try {
-    const data = localStorageService.load<EvaluationRow[]>(EVALUATION_DATA_STORAGE_KEY);
+    const data = loadFromStorage<EvaluationRow[]>(EVALUATION_DATA_STORAGE_KEY);
     return data ?? [];
   } catch (error) {
     console.error('Failed to load evaluations:', error);
