@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CsvUploadButton } from '../../../CsvHandler/CsvUploadButton';
-import { saveUploadedStudentData } from '../Services/uploadCsv';
+
 import type { Student } from '../../Student/Services/StudentInfo';
+import { StudentSaveService } from '../Services/StudentSaveService';
 
 const UploadPage = () => {
   const [fileName, setFileName] = useState('');
@@ -10,7 +11,8 @@ const UploadPage = () => {
 
   // Called after successful CSV upload
   const handleUpload = (data: Student[], fileName: string) => {
-    saveUploadedStudentData(data, fileName); // Save data to local storage
+    const studentSaveService = StudentSaveService.createDefault();
+    studentSaveService.save(data, fileName); // Save data to local storage
     setFileName(fileName);
     navigate('/students'); // Navigate to student list page
   };

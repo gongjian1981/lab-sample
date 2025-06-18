@@ -5,7 +5,7 @@ import StudentProfile from '../Enrollment/Student/Pages/StudentProfile/StudentPr
 import StudentEmail from '../Enrollment/Student/Pages/StudentEmail/StudentEmail';
 import StudentEdit from '../Enrollment/Student/Pages/StudentEdit/StudentEdit';
 import EnrollmentList from '../Enrollment/Platform/Pages/EnrollList';
-
+import EnrollStatus from '../Enrollment/Platform/Pages/EnrollStatus';
 
 
 const studentRoutes = [
@@ -16,6 +16,7 @@ const studentRoutes = [
   { path: 'email/:id', element: <StudentEmail /> },
   { path: 'edit/:id', element: <StudentEdit /> },
   { path: 'enrollment', element: <EnrollmentList /> },
+  { path: 'status', element: <EnrollStatus /> },
 ];
 
 export default studentRoutes;

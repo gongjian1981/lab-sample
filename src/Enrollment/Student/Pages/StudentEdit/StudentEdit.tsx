@@ -7,10 +7,16 @@ import { updateStudent } from "../../Services/uipdateStudent";
 const StudentEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const student = id ? findStudentById(id) : undefined;
-
-  const [formData, setFormData] = useState<Student | undefined>(() => student);
-
+  const [formData, setFormData] = useState<Student | undefined>(undefined);
+  
+  React.useEffect(() => {
+    if (id) {
+      findStudentById(id).then((student) => {
+        setFormData(student);
+      });
+    }
+  }, [id]);
+  
   if (!formData) {
     return <div className="p-6 text-red-600">Student not found.</div>;
   }

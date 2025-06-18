@@ -1,31 +1,47 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Student } from "../../Services/StudentInfo";
 import { findStudentById } from "../../Services/findStudentById";
 import { deleteStudentById } from "../../Services/deleteStudentById";
+import type { Student } from "../../Types/StudentTypes"; // 替换为你真实路径
 
 const StudentProfile = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const [student, setStudent] = useState<Student | undefined>();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!id) return;
+
+    const fetchStudent = async () => {
+      const result = await findStudentById(id);
+      setStudent(result);
+      setLoading(false);
+    };
+
+    fetchStudent();
+  }, [id]);
+
+  const handleDelete = async (studentId: string) => {
+    const confirmed = window.confirm("Are you sure you want to delete this student?");
+    if (confirmed) {
+      await deleteStudentById(studentId);
+      alert("Student deleted successfully.");
+      navigate("/students");
+    }
+  };
 
   if (!id) {
     return <div className="p-6 text-red-500">Invalid student ID.</div>;
   }
 
-  const student = findStudentById(id);
+  if (loading) {
+    return <div className="p-6">Loading student information...</div>;
+  }
 
   if (!student) {
     return <div className="p-6 text-red-500">Student not found.</div>;
   }
-
-  const handleDelete = (studentId: string) => {
-    const confirmed = window.confirm("Are you sure you want to delete this student?");
-    if (confirmed) {
-      deleteStudentById(id);
-      alert("Student deleted successfully.");
-    }
-    navigate("/students");
-  };
 
   return (
     <div className="p-6 overflow-auto">

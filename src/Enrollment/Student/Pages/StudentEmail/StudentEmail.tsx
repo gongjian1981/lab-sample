@@ -1,42 +1,64 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { sendEmail } from "../../Services/sendEmail";
 import { useNavigate, useParams } from "react-router-dom";
 import { findStudentById } from "../../Services/findStudentById";
+import type { Student } from "../../Types/StudentTypes"; // 请替换为你实际的路径
 
 const StudentEmail: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const student = id ? findStudentById(id) : undefined;
+  const [student, setStudent] = useState<Student | undefined>();
+  const [loading, setLoading] = useState(true);
   const [content, setContent] = useState("");
 
-  if (!student) {
-    return <div className="p-6 text-red-600">Student not found.</div>;
-  }
+  useEffect(() => {
+    if (!id) return;
 
-  const handleSendEmail = () => {
+    const fetchStudent = async () => {
+      const result = await findStudentById(id);
+      setStudent(result);
+      setLoading(false);
+    };
+
+    fetchStudent();
+  }, [id]);
+
+  const handleSendEmail = async () => {
     if (!content.trim()) {
       alert("Please enter email content before sending.");
       return;
     }
 
     const confirmed = window.confirm("Do you want to send the email?");
-    if (confirmed) {
-      const success = sendEmail(student.id, content);
-      if (success) {
-        alert("Email sent successfully!");
-        navigate(`/profile/${id}`);
-      } else {
-        alert("Failed to send email.");
-      }
+    if (!confirmed || !student) return;
+
+    const success = await sendEmail(student.id, content); // 支持 async
+    if (success) {
+      alert("Email sent successfully!");
+      navigate(`/profile/${student.id}`);
+    } else {
+      alert("Failed to send email.");
     }
   };
+
+  if (!id) {
+    return <div className="p-6 text-red-600">Invalid student ID.</div>;
+  }
+
+  if (loading) {
+    return <div className="p-6">Loading student info...</div>;
+  }
+
+  if (!student) {
+    return <div className="p-6 text-red-600">Student not found.</div>;
+  }
 
   return (
     <div className="p-6">
       <div className="bg-white shadow rounded-lg p-6">
         <div className="flex items-center gap-4 mb-6">
-          <img src={student.imageUrl} alt={student.name} className="w-24 h-24 rounded-full" />
+          <img src={student.imageUrl || "https://via.placeholder.com/100"} alt={student.name} className="w-24 h-24 rounded-full" />
           <div>
             <h2 className="text-2xl font-bold">{student.name}</h2>
             <p className="text-gray-600">{student.email}</p>

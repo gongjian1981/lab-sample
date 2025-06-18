@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { getStudents } from "../../Student/Services/getStudents";
+import { getStudentsBySectionAndPage } from "../../Student/Services/getStudentsBySectionAndPage";
 import { enrollStudentToPlatform } from "../Services/enrollStudentToPlatform";
 
 function useQuery() {
@@ -17,7 +17,22 @@ const StudentListByPlatform: React.FC = () => {
   const [page, setPage] = useState<number>(isNaN(pageFromUrl) ? 1 : pageFromUrl);
   const pageSize = 10;
 
-  const { data: students, total, totalPages } = getStudents(undefined, page, pageSize);
+  const [students, setStudents] = useState<any[]>([]);
+  const [total, setTotal] = useState<number>(0);
+  const [totalPages, setTotalPages] = useState<number>(1);
+
+  const loadStudents = async () => {
+    const result = await getStudentsBySectionAndPage(undefined, page, pageSize);
+    setStudents(result.data);
+    setTotal(result.total);
+    setTotalPages(result.totalPages);
+  };
+
+  React.useEffect(() => {
+    let isMounted = true;
+    loadStudents();
+    return () => { isMounted = false; };
+  }, [page, pageSize]);
 
   const updateQueryParam = (newPage: number) => {
     const params = new URLSearchParams(location.search);
@@ -38,16 +53,16 @@ const StudentListByPlatform: React.FC = () => {
     updateQueryParam(newPage);
   };
 
-  const handleEnrollment = (studentId: string) => {
+  const handleEnrollment = async (studentId: string) => {
     const confirmed = window.confirm("Are you sure the student enroll with " + platform + "?");
-    if (confirmed) {
-      if (enrollStudentToPlatform(studentId, platform as 'github' | 'loop')) {
-        alert("Student enrolled successfully.");
-        navigate(location.pathname + location.search); // refresh current list
-      }
-      else {
-        alert("Failed to enroll student. Please try again.");
-      }
+    if (!confirmed) return;
+
+    const success = await enrollStudentToPlatform(studentId, platform as 'github' | 'loop');
+    if (success) {
+      alert("Student enrolled successfully.");
+      await loadStudents();
+    } else {
+      alert("Failed to enroll student. Please try again.");
     }
   };
 
@@ -72,6 +87,12 @@ const StudentListByPlatform: React.FC = () => {
           >
             Loop
           </button>
+          <Link
+            to="/status"
+            className="border rounded px-3 py-1 bg-purple-600 text-white hover:bg-purple-700"
+          >
+            View Status
+          </Link>
         </div>
 
       </div>

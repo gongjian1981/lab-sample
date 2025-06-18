@@ -1,6 +1,5 @@
 import type { EvaluationRow } from '../../Heatmap/Services/evaluation';
-import { CsvHandler } from '../../../CsvHandler/csvHandler';
-import { saveEvaluations } from './evaluationStorage';
+import { EvaluationSaveService } from './EvaluationSaveService';
 
 /**
  * Deletes an evaluation entry at the given index.
@@ -11,7 +10,9 @@ export function deleteEvaluation(
   filePath: string | null
 ): EvaluationRow[] {
   const updated = data.filter(ev => ev.evaluationId !== evaluationId);
-  if (filePath) CsvHandler.saveDataToFile(filePath, updated);
-  saveEvaluations(updated);
+  
+  const evaluationSaveService = EvaluationSaveService.createDefault();  
+  evaluationSaveService.save(updated);
+
   return updated;
 }

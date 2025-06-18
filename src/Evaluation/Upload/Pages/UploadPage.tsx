@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CsvUploadButton } from '../../../CsvHandler/CsvUploadButton';
-import { saveUploadedEvaluationData } from '../Services/uploadCsv';
-import type { EvaluationRow } from '../../Heatmap/Services/evaluation';
+import { EvaluationSaveService } from '../Services/EvaluationSaveService';
+import { EvaluationRow } from '../../Heatmap/Services/evaluation';
 
 const UploadPage = () => {
   const [fileName, setFileName] = useState('');
@@ -10,9 +10,14 @@ const UploadPage = () => {
 
   // Called after successful CSV upload
   const handleUpload = (data: EvaluationRow[], fileName: string) => {
-    saveUploadedEvaluationData(data, fileName); // Save data to local storage
-    setFileName(fileName);
-    navigate('/heatmap'); // Navigate to heatmap page
+
+    const evaluationSaveService = EvaluationSaveService.createDefault();
+    if (evaluationSaveService.save(data, fileName)) {
+      setFileName(fileName);
+      navigate('/heatmap');
+    } else {
+      alert('Failed to save evaluation data. Please try again.');
+    }
   };
 
   return (

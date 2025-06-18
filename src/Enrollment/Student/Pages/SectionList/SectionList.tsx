@@ -1,9 +1,17 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { getSections } from "../../Services/getSections";
 
-
 const SectionList: React.FC = () => {
-  const sections = getSections();
+  const [sections, setSections] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchSections = async () => {
+      const result = await getSections();
+      setSections(result);
+    };
+    fetchSections();
+  }, []);
+
   return (
     <div className="p-6">
       <h1 className="text-2xl font-semibold mb-6">Section List</h1>
@@ -35,7 +43,7 @@ const SectionList: React.FC = () => {
             <tr key={index} className="border-t">
               <td className="px-6 py-4">
                 <a href={`/students?section=${encodeURIComponent(section)}`}
-                 className="font-semibold text-blue-600 hover:underline">
+                  className="font-semibold text-blue-600 hover:underline">
                   {section}
                 </a>
               </td>

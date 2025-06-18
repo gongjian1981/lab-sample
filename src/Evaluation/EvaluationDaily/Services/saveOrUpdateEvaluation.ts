@@ -1,5 +1,7 @@
+  import { CsvFileService } from '../../../CsvHandler/CsvFileService';
+import { LocalStorage } from '../../../localStroageService';
 import type { EvaluationRow } from '../../Heatmap/Services/evaluation';
-import { saveEvaluations } from './evaluationStorage';
+import { EvaluationSaveService } from '../../Upload/Services/EvaluationSaveService';
 
 /**
  * Saves or updates a single evaluation entry.
@@ -23,7 +25,10 @@ export function saveOrUpdateEvaluation(
     ? data.map(ev => ev.evaluationId === updatedForm.evaluationId ? updatedForm : ev)
     : [...data, updatedForm];
 
-  saveEvaluations(updatedData);
+  const storage = new LocalStorage();
+  const csvHandler = new CsvFileService();
+  const evaluationSaveService = new EvaluationSaveService(storage, csvHandler);  
+  evaluationSaveService.save(updatedData);
 
   return updatedData;
 }

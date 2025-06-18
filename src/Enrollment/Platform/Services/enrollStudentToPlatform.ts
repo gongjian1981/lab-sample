@@ -1,34 +1,35 @@
-// Update the import path below if the actual file location or name is different
-import type { EnrollmentStatus } from "../../Student/Services/StudentInfo"; // Make sure EnrollmentStatus is an enum or const, not just a type
-import { getAllStudents } from "../../Student/Services/getAllStudents";
-import { saveStudents } from "../../Student/Services/saveStudent";
+import { StudentLoadService } from '../../Student/Services/StudentLoadService';
+import { StudentSaveService } from '../../Student/Services/StudentSaveService';
 
-export function enrollStudentToPlatform(
+export async function enrollStudentToPlatform(
   studentId: string,
-  platform: 'loop' | 'github',
-): boolean {
-  const students = getAllStudents();
-  if (!students) { 
-    console.error("No students found.");
+  platform: 'github' | 'loop'
+): Promise<boolean> {
+  try {
+    const loadService = StudentLoadService.createDefault();
+    const saveService = StudentSaveService.createDefault();
+
+    const students = await loadService.loadStudents();
+
+    let found = false;
+
+    const updated = students.map((s) => {
+      if (s.id === studentId) {
+        found = true;
+        if (platform === 'github') s.githubStatus = 'enrolled';
+        if (platform === 'loop') s.loopStatus = 'enrolled';
+      }
+      return s;
+    });
+
+    if (found) {
+      await saveService.save(updated); // 👈 确保 save 是异步的
+      return true;
+    }
+
+    return false;
+  } catch (error) {
+    console.error('Enrollment failed:', error);
     return false;
   }
-  if (platform === 'loop') {
-    const student = students.find(s => s.id === studentId);
-    if (!student) {
-      console.error(`Student with ID ${studentId} not found.`);
-      return false;
-    }
-    student.loopStatus = "enrolled";
-  }
-  if (platform === 'github') {
-    const student = students.find(s => s.id === studentId);
-    if (!student) {
-      console.error(`Student with ID ${studentId} not found.`);
-      return false;
-    }
-    student.githubStatus = "enrolled";
-  }
-  // Save the updated students back to storage
-  saveStudents(students);
-  return true;
 }

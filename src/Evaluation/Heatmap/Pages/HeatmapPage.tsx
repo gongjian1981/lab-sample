@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+  import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { EvaluationRow } from '../Services/evaluation';
 import { getEvaluationsByDayMap } from '../Services/getEvaluationsByDayMap';
 import { getCalendarRange, formatDateToYYYYMMDD, formatDayLabel} from '../Services/calendarTool';
-import { loadEvaluations } from '../Services/loadEvaluations';
 import { isCurrentMonth, shouldHighlightWeek } from '../Services/evaluationLayout';
+import { EvaluationLoadService } from '../Services/EvaluationLoadService';
 
 
 const HeatmapPage: React.FC = () => {
@@ -17,9 +17,16 @@ const HeatmapPage: React.FC = () => {
   const [selectedCourse, setSelectedCourse] = useState('');
 
   useEffect(() => {
-    const cached = loadEvaluations();
-    setLocalData(cached);
+    const evaluationLoadService = EvaluationLoadService.createDefault();
+
+    const loadData = async () => {
+      const cached = await evaluationLoadService.loadEvaluations();
+      setLocalData(cached);
+    };
+
+    loadData();
   }, []);
+  
   const courses = Array.from(new Set(localData.map(d => d.courseCode)));
   const filteredData = selectedCourse
     ? localData.filter(item => item.courseCode === selectedCourse)

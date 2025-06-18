@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { getStudents } from "../../Services/getStudents";
-import { Student } from "../../Services/StudentInfo";
+import { getStudentsBySectionAndPage } from "../../Services/getStudentsBySectionAndPage";
 import { deleteStudentById } from "../../Services/deleteStudentById";
 
 function useQuery() {
@@ -18,7 +17,24 @@ const StudentList: React.FC = () => {
   const [page, setPage] = useState<number>(isNaN(pageFromUrl) ? 1 : pageFromUrl);
   const pageSize = 10;
 
-  const { data: students, total, totalPages } = getStudents(section, page, pageSize);
+  const [students, setStudents] = useState<any[]>([]);
+  const [total, setTotal] = useState<number>(0);
+  const [totalPages, setTotalPages] = useState<number>(1);
+
+  const loadStudents = async () => {
+    const result = await getStudentsBySectionAndPage(section, page, pageSize);
+    setStudents(result.data);
+    setTotal(result.total);
+    setTotalPages(result.totalPages);
+  };
+
+  React.useEffect(() => {
+    let isMounted = true;
+    loadStudents();
+    return () => {
+      isMounted = false;
+    };
+  }, [section, page, pageSize]);
 
   const updatePageInUrl = (newPage: number) => {
     const params = new URLSearchParams(location.search);
@@ -38,13 +54,14 @@ const StudentList: React.FC = () => {
     updatePageInUrl(newPage);
   };
 
-  const handleDelete = (studentId: string) => {
+  const handleDelete = async (studentId: string) => {
     const confirmed = window.confirm("Are you sure you want to delete this student?");
     if (confirmed) {
-      deleteStudentById(studentId);
+      await deleteStudentById(studentId);
       alert("Student deleted successfully.");
+
+      loadStudents();
     }
-    navigate("/students");
   };
 
   return (

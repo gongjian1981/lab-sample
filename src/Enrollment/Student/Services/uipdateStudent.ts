@@ -1,13 +1,13 @@
 import { Student } from './StudentInfo';
-import { getAllStudents } from './getAllStudents';
-import { saveStudents } from './saveStudent';
+import { StudentSaveService } from './StudentSaveService';
+import { StudentLoadService } from './StudentLoadService';
 
 /**
  * Saves or updates a single student entry.
  */
-export function updateStudent(
+export async function updateStudent(
   form: Partial<Student>
-): Student[] {
+): Promise<Student[]> {
   const updatedStudent: Student = {
     id: form.id || '',
     name: form.name || '',
@@ -20,15 +20,17 @@ export function updateStudent(
     loopStatus: form.loopStatus || '',
     githubStatus: form.githubStatus || ''
   };
+  const studentSaveService = StudentSaveService.createDefault();
+  const studentLoadService = StudentLoadService.createDefault();
+  const data = await studentLoadService.loadStudents();
 
-  const data: Student[] = getAllStudents();
   const exists = data.some((s) => s.id === updatedStudent.id);
 
   const updatedData = exists
     ? data.map((s) => s.id === updatedStudent.id ? updatedStudent : s)
     : [...data, updatedStudent];
 
-  saveStudents(updatedData);
+  studentSaveService.save(updatedData);
 
   return updatedData;
 }

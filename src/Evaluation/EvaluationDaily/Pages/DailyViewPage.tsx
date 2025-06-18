@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import type { EvaluationRow } from '../../Heatmap/Services/evaluation';
 import { getEvaluationsForDate } from '../Services/filterByDate';
 import { deleteEvaluation } from '../Services/deleteEvaluation';
@@ -13,12 +13,18 @@ interface DailyViewProps {
 export const COURSE_OPTIONS = ['INFO8171 - 2', 'SENG8051 - 2', 'SENG8061 - 2', 'SENG8071 - 2', 'SENG8130 - 2'];
 export const evaluationType_OPTIONS = ['Assignment', 'Quiz', 'Midterm', 'Final'];
 
-const DailyViewPage: React.FC<DailyViewProps> = ({
-  date,
-  onBack,
-}) => {
-  const filePath = null; // Replace with actual file path if needed
-  const [data, setData] = useState<EvaluationRow[]>(loadEvaluations() || []);
+const DailyViewPage: React.FC<DailyViewProps> = ({ date, onBack }) => {
+  const filePath = null;
+  const [data, setData] = useState<EvaluationRow[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await loadEvaluations();
+      setData(result);
+    };
+    fetchData();
+  }, []);
+  
   const [form, setForm] = useState<Partial<EvaluationRow>>({
     evaluationId: '',
     courseCode: '',
@@ -26,34 +32,43 @@ const DailyViewPage: React.FC<DailyViewProps> = ({
     dueDay: ''
   });
 
-  const evaluationsForDate = getEvaluationsForDate(data, date);
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await loadEvaluations();
+      setData(result);
+    };
+    fetchData();
+  }, []);
 
-  const handleDelete = (evaluationId: string) => {
+  const evaluationsForDate = useMemo(() => {
+    return getEvaluationsForDate(data, date);
+  }, [data, date]);
+
+  const handleDelete = async (evaluationId: string) => {
     if (!window.confirm('Are you sure you want to delete this evaluation?')) return;
-    const updated = deleteEvaluation(data, evaluationId, filePath);
+    const updated = await deleteEvaluation(data, evaluationId, filePath);
     setData(updated);
   };
 
   const handleEdit = (evaluationId: string) => {
     const ev = evaluationsForDate.find(e => e.evaluationId === evaluationId);
-    if (!ev) {
-      console.error('Evaluation not found for ID:', evaluationId);
-      return;
-    }
+    if (!ev) return;
     setForm(ev);
   };
 
-  const handleSave = () => {
-    if (!form.courseCode || !form.evaluationType ) {
+  const handleSave = async () => {
+    if (!form.courseCode || !form.evaluationType) {
       alert('Course and Type are required');
       return;
     }
+
     const confirmText = form.evaluationId
       ? 'Are you sure you want to update this evaluation?'
       : 'Are you sure you want to add this new evaluation?';
 
     if (!window.confirm(confirmText)) return;
-    const updated = saveOrUpdateEvaluation(data, form, date, filePath);
+
+    const updated = await saveOrUpdateEvaluation(data, form, date, filePath);
     setData(updated);
     setForm({ evaluationId: '', courseCode: '', evaluationType: '', dueDay: '' });
   };

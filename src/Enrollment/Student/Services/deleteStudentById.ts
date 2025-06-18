@@ -1,18 +1,17 @@
 import { Student } from './StudentInfo';
-import { getAllStudents } from './getAllStudents';
-import { saveStudents } from './saveStudent';
+import { StudentSaveService } from './StudentSaveService';
+import { StudentLoadService } from './StudentLoadService';
 
-/**
- * Deletes a student by ID.
- */
-export function deleteStudentById(
+export async function deleteStudentById(
   studentId: string
-): void {
-  const data: Student[] = getAllStudents();
+): Promise<void> {
+  const studentLoadService = StudentLoadService.createDefault();
+  const studentSaveService = StudentSaveService.createDefault();
+  const data: Student[] = await studentLoadService.loadStudents();
   if (!data) {
     console.error('No student data found.');
     return;
   }
   const updatedData = data.filter((s) => s.id !== studentId);
-  saveStudents(updatedData);
+  studentSaveService.save(updatedData);
 }
